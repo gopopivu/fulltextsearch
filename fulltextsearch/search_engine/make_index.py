@@ -6,21 +6,10 @@ class MakeIndex:
 	def __init__(self, filenames):
 		self.filenames = filenames
 
-	def normilize(self, text):
-		from nltk.corpus import stopwords
-		words = [word for word in words if word not in stopwords.words("english")]
-		from stemming.porter2 import stem
-		stemmed_words = [stem(word) for word in words]
-		return stemmed_words
-
 	def process_file(self):
-		pattern = re.compile('[\W_]+')
 		files_and_words = {}
 		for filename in self.filenames:
-			read_file = open(filename).read().lower()
-			text = pattern.sub(' ', read_file)
-			words = text.split()			
-			files_and_words[filename] = self.normilize(words)
+			files_and_words[filename] = open(filename).read().split()
 		return files_and_words
 
 	def make_positions(self, words_dict):
@@ -44,7 +33,7 @@ class MakeIndex:
 		indexes = {}
 		for filename in intermediate_indexes:
 			for word in intermediate_indexes[filename]:
-				if word in index:
+				if word in indexes:
 					indexes[word][filename] = intermediate_indexes[filename][word]
 				else:
 					indexes[word] = {filename : intermediate_indexes[filename][word]}
