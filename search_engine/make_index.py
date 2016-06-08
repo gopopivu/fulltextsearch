@@ -51,5 +51,3 @@ class MakeIndex:
 				self.indexes[word].update(self.new_indexes[word])
 			else:
 				self.indexes[word] = self.new_indexes[word]
-
-
