@@ -1,15 +1,16 @@
 import re
 import json
-
+from search.models import SearchResult
 
 class MakeIndex:
-	def __init__(self, filenames):
-		self.filenames = filenames
+	def __init__(self, results):
+		self.results = results
+		self.index_path = 'search_engine/indexes.json'
 
 	def process_file(self):
 		files_and_words = {}
-		for filename in self.filenames:
-			files_and_words[filename] = open(filename).read().split()
+		for result in self.results:
+			files_and_words[result.filename] = result.html.split()
 		return files_and_words
 
 	def make_positions(self, words_dict):
@@ -24,8 +25,8 @@ class MakeIndex:
 	def make_intermediate_indexes(self):
 		files_and_words = self.process_file()
 		total_dict = {}
-		for filename in self.filenames:
-			total_dict[filename] = self.make_positions(files_and_words[filename])
+		for result in self.results:
+			total_dict[result.filename] = self.make_positions(files_and_words[result.filename])
 		return total_dict
 
 	def make_indexes(self):
@@ -40,10 +41,10 @@ class MakeIndex:
 		return indexes
 
 	def save_indexes(self):
-		self.indexes = json.load(open('indexes.json'))
+		self.indexes = json.load(open(self.index_path))
 		self.new_indexes = self.make_indexes()
 		self.merge_indexes()
-		json.dump(open('indexes.json'), self.indexes)
+		json.dump(self.indexes, open(self.index_path, 'w'))
 
 	def merge_indexes(self):
 		for word in self.new_indexes:

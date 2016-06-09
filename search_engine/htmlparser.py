@@ -7,7 +7,6 @@ class Parser:
     self.html = html
 
   def get_text_from_html(self):
-    #html = urllib.urlopen(url).read()
     soup = BeautifulSoup(self.html)
     for script in soup(["script", "style"]):
       script.extract()
