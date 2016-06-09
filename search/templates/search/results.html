@@ -1,0 +1,8 @@
+{% load staticfiles %}
+{% load endless %}
+
+{% paginate results %}
+{% for result in results %}
+	{% include 'search/result.html' %}
+{% endfor %}
+{% show_more %}

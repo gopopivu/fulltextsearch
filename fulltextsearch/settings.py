@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'search',
-    'endless_pagination'
+    'endless_pagination',
+    'bootstrapform',
 )
 
 MIDDLEWARE_CLASSES = (

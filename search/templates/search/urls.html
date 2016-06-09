@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load endless %}
+
+{% block content %}
+	{% paginate results %}
+	{% for result in results %}
+		{% include 'search/result.html' %}
+		<div class="btn-group">
+			<a class="btn btn-primary" href="{% url 'search:search_result_update' result.id %}">Изменить</a>
+		</div>
+	{% endfor %}
+	{% show_more %}
+{% endblock %}
