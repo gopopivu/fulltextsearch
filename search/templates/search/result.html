@@ -1,0 +1,17 @@
+{% load staticfiles %}
+{% load endless %}
+
+{% paginate results %}
+{% for result in results %}
+	<div class="row">
+		<div class="col-md-4">
+			<div class="well">
+				<div class="album">
+					<h2>{{result.url}}</h2>
+					<em>{{result.html}}</em>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+{% show_more %}

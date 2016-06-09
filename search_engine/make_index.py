@@ -10,7 +10,7 @@ class MakeIndex:
 	def process_file(self):
 		files_and_words = {}
 		for result in self.results:
-			files_and_words[result.filename] = result.html.split()
+			files_and_words[result.filename] = result.normalized_html.split()
 		return files_and_words
 
 	def make_positions(self, words_dict):

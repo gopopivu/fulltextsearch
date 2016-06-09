@@ -15,5 +15,13 @@
 {% block content %} 
 {% endblock %}
 
+<script src="{% static 'search/js/endless-pagination.js' %}"></script>
+<script>
+    $.endlessPaginate({
+        paginateOnScroll: true,
+        paginateOnScrollMargin: 20
+    });
+</script>
+
 </body>
 </html>

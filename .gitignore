@@ -1,2 +1,2 @@
 search_engine/indexes.json
-**.pyc
+*.pyc
