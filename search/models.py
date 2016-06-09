@@ -5,4 +5,5 @@ class SearchResult(models.Model):
   url = models.URLField(max_length=2000)
   html = models.TextField()
   normalized_html = models.TextField(default='')
+  title=models.CharField(max_length=255, default='')
 

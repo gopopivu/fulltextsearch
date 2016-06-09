@@ -14,7 +14,7 @@ def create_filename(url):
 def create_html(url):
   html = urllib.urlopen(url).read()
   parser = Parser(html)
-  return parser.get_text_from_html(), parser.get_normalized_html()
+  return parser.get_title(), parser.get_text_from_html(), parser.get_normalized_html()
 
 def index(request, template = 'search/index.html', extra_context = None):
   if request.method == 'POST':
@@ -34,12 +34,18 @@ def add_index(request, template = 'search/add_index.html', extra_context = None)
     form = SearchResultForm(request.POST)
     if form.is_valid():
       url = request.POST['url']
-      html, normalized_html = create_html(url)
+      title, html, normalized_html = create_html(url)
       first_50_words = ' '.join(html.split()[:50])
-      s = SearchResult.objects.create(url=url, html=first_50_words, filename=create_filename(url), normalized_html=normalized_html)
+      s = SearchResult.objects.create(url=url, html=first_50_words, filename=create_filename(url),
+       normalized_html=normalized_html, title=title)
       MakeIndex([s]).save_indexes()
   else:
     form = SearchResultForm()
   return render(request, template, {'form': form})
+
+def urls(request, template = 'search/result.html'):
+  results = SearchResult.objects.order_by('-id')
+  return render(request, template, {'results': results})
+
     
 

@@ -1,6 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
 import re
+import copy
 
 def delete_marks(text):
   pattern = re.compile('[\W_]+')
@@ -17,10 +18,15 @@ class Parser:
     return soup.get_text()
 
   def get_normalized_html(self):
+    soup = BeautifulSoup(self.html)
     soup = self.get_text_from_html()
-    return ' '.join(self.normilize(soup))
+    return ' '.join(self.normalize(soup))
 
-  def normilize(self, text):
+  def get_title(self):
+    soup = BeautifulSoup(self.html)
+    return soup.title.contents[0]
+
+  def normalize(self, text):
     delete_marks(text)
     words = text.split()
     from nltk.corpus import stopwords
