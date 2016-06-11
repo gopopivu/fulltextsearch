@@ -1,7 +1,26 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-	<blockquote>
-		{{index}}
-	</blockquote>
+	{% load endless %}
+
+{% paginate words %}
+	<div>
+	<ul>
+	{% for word, filename in words %}
+		<li><h2>{{ word }}</h2></li>
+		<ul>
+			{% for name, indexes in filename %}
+				<li>{{ name }}</li>
+				<ul>
+					{% for index in indexes%}
+					<li>{{ index }}</li>
+					{% endfor %}
+				</ul>
+			{% endfor %}
+		</ul>
+	{% endfor %}
+	</ul>
+	</div>
+
+{% show_more %}
 {% endblock %}

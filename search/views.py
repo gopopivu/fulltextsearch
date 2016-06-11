@@ -1,11 +1,12 @@
 from django.shortcuts import render
 
 from .models import SearchResult
-from .forms import SearchResultForm, SearchForm
+from .forms import SearchResultForm, SearchForm, AddDocumentsForm
 import urllib
 from search_engine.htmlparser import Parser
 from search_engine.make_index import MakeIndex
 from search_engine.queries import Queries
+from search_engine.crawl import Crawler
 from django.views.generic.edit import UpdateView
 import json
 
@@ -16,6 +17,20 @@ def create_html(url):
   html = urllib.urlopen(url).read()
   parser = Parser(html)
   return parser.get_title(), parser.get_text_from_html(), parser.get_normalized_html()
+
+def create_search_result(url):
+  title, html, normalized_html = create_html(url)
+  first_20_words = ' '.join(html.split()[:20])
+  sr = SearchResult.objects.filter(filename=create_filename(url)).first()
+  if sr is None:
+    return SearchResult.objects.create(url=url, html=first_20_words, filename=create_filename(url),
+      normalized_html=normalized_html, title=title)
+  else:
+    sr.url = url
+    sr.html = first_20_words
+    sr.normalized_html = normalized_html
+    sr.title = title
+    sr.save()
 
 def index(request, template = 'search/index.html', extra_context = None):
   if request.method == 'POST':
@@ -35,10 +50,7 @@ def add_index(request, template = 'search/add_index.html', extra_context = None)
     form = SearchResultForm(request.POST)
     if form.is_valid():
       url = request.POST['url']
-      title, html, normalized_html = create_html(url)
-      first_50_words = ' '.join(html.split()[:20])
-      s = SearchResult.objects.create(url=url, html=first_50_words, filename=create_filename(url),
-       normalized_html=normalized_html, title=title)
+      s = create_search_result(url)
       MakeIndex([s]).save_indexes()
   else:
     form = SearchResultForm()
@@ -46,12 +58,25 @@ def add_index(request, template = 'search/add_index.html', extra_context = None)
 
 def get_index(request,template = 'search/get_index.html'):
   index = json.load(open('search_engine/indexes.json'))
-  return render(request, template, {'index': index})
+  return render(request, template, {'words': index})
 
+def download(request, template='search/download.html'):
+  if request.method == 'POST':
+    form = AddDocumentsForm(request.POST)
+    if form.is_valid():
+      baseurl = request.POST['add_documents']
+      max_length = int(request.POST['max_length'])
+      max_depth = int(request.POST['max_depth'])
+      urls = Crawler(baseurl, max_length, max_depth).get_links()
+      [create_search_result(url) for url in urls]
+      MakeIndex(urls).save_indexes()
+  else:
+    form = AddDocumentsForm()
+  return render(request, template, {'form': form})  
 
-def urls(request, template = 'search/urls.html'):
+def urls(request, template = 'search/urls.html', page_template='search/url.html'):
   results = SearchResult.objects.order_by('-id')
-  return render(request, template, {'results': results})
+  return render(request, template, {'results': results, 'page_template': page_template})
 
 class SearchResultUpdate(UpdateView):
     model = SearchResult

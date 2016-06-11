@@ -1,8 +1,11 @@
 {% load staticfiles %}
 {% load endless %}
+{% load bootstrap %}
 
+{% block content %}
 {% paginate results %}
 {% for result in results %}
 	{% include 'search/result.html' %}
 {% endfor %}
 {% show_more %}
+{% endblock %}

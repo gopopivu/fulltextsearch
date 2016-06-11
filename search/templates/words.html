@@ -1,0 +1,18 @@
+
+{% load staticfiles %}
+{% load endless %}
+
+{% paginate results %}
+{% for word in words %}
+	<div>
+	<ul class='dropdown'>
+		<li class='dropdown_top'><h2>{{% word %}}</h2></li>
+		<ul class='dropdown'>
+		 {% for filename in filenames %}
+		 	<li class = 'dropdown_inside'>{{% filename %}}</li>
+		  </ul>
+		 {% endfor %}
+		</ul>
+	</div>
+{% endfor %}
+{% show_more %}

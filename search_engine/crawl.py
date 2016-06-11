@@ -19,10 +19,8 @@ class Crawler:
 		for link in soup.findAll('a'):
 			href = link.get('href')
   	 		if href and href.startswith('/'):
-  	 			print [e for e in href.split('/') if e]
   	 			if len([e for e in href.split('/') if e]) == self.depth + 1:
   	 				local_urls.append(self.urlbase + href)
-  	 	print local_urls
   	 	for an_url in local_urls:
   	 			if an_url not in self.was_here:
 		 			self.depth += 1
